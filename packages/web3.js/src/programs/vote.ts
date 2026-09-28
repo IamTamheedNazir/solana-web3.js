@@ -279,7 +279,7 @@ function encodeVoteInstructionData<TCodec extends Codec<any, any>>(
   return toUint8ArrayView(
     codec.encode({
       instruction,
-      ...(params ?? {}),
+      ...params,
     } as InstructionCodecInput<TCodec>),
   );
 }
@@ -300,7 +300,7 @@ function decodeVoteInstructionData<TCodec extends Codec<any, any>>(
     ) {
       throw err;
     }
-    throw new Error('invalid instruction; ' + err);
+    throw new Error('invalid instruction; ' + String(err));
   }
 
   if (decoded.instruction !== expectedInstruction) {

@@ -154,7 +154,7 @@ export class PublicKey implements HasAddress {
       false,
       ['verify'],
     );
-    return verifySignatureAsync(
+    return await verifySignatureAsync(
       publicKeyCryptoKey,
       signatureBytes(signatureSnapshot),
       messageSnapshot,

@@ -129,7 +129,7 @@ export class Ed25519Program {
 
     try {
       const keypair = await Keypair.fromSecretKey(privateKey);
-      const publicKey = await keypair.publicKey.toBytes();
+      const publicKey = keypair.publicKey.toBytes();
       const signature = await sign(message, privateKey);
 
       return this.createInstructionWithPublicKey({
@@ -139,7 +139,7 @@ export class Ed25519Program {
         instructionIndex,
       });
     } catch (error) {
-      throw new Error(`Error creating instruction; ${error}`);
+      throw new Error(`Error creating instruction; ${String(error)}`);
     }
   }
 }

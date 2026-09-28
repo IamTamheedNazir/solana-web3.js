@@ -3349,7 +3349,10 @@ export class Connection {
       );
     } catch (e) {
       throw new Error(
-        'failed to get info about account ' + publicKey.toBase58() + ': ' + e,
+        'failed to get info about account ' +
+          publicKey.toBase58() +
+          ': ' +
+          String(e),
       );
     }
   }
@@ -3394,7 +3397,7 @@ export class Connection {
     } catch (error) {
       throwSolanaRpcErrorIfNeeded(
         error,
-        `failed to get info for accounts ${publicKeys.map(key => key.toBase58())}`,
+        `failed to get info for accounts ${publicKeys.map(key => key.toBase58()).join(',')}`,
       );
     }
   }
@@ -3436,7 +3439,7 @@ export class Connection {
     } catch (error) {
       throwSolanaRpcErrorIfNeeded(
         error,
-        `failed to get info for accounts ${publicKeys.map(key => key.toBase58())}`,
+        `failed to get info for accounts ${publicKeys.map(key => key.toBase58()).join(',')}`,
       );
     }
   }
@@ -3777,7 +3780,7 @@ export class Connection {
                 },
               });
             }
-          } catch (_e) {
+          } catch {
             // The subscription and expiry strategy still settle the confirmation.
           }
         })();
@@ -3821,7 +3824,7 @@ export class Connection {
             .getBlockHeight({commitment})
             .send(abortSignal == null ? undefined : {abortSignal});
           return blockHeight;
-        } catch (_e) {
+        } catch {
           return -1n;
         }
       };
@@ -3929,7 +3932,7 @@ export class Connection {
           );
           lastCheckedSlot = context.slot;
           return nonceAccount?.nonce;
-        } catch (_e) {
+        } catch {
           // If for whatever reason we can't reach/read the nonce
           // account, just keep using the last-known value.
           return currentNonceValue;
@@ -5625,7 +5628,7 @@ export class Connection {
       }
     }
 
-    return this._pollNewBlockhash();
+    return await this._pollNewBlockhash();
   }
 
   /**
@@ -5736,7 +5739,7 @@ export class Connection {
       }
 
       config = {
-        ...(configOrSigners ?? {}),
+        ...configOrSigners,
         commitment: this._resolveCommitment(configOrSigners?.commitment),
       } satisfies SimulateTransactionConfig;
     } else {
@@ -5946,7 +5949,7 @@ export class Connection {
       }
 
       const wireTransaction = transaction.serialize();
-      return this.sendRawTransaction(wireTransaction, signersOrOptions);
+      return await this.sendRawTransaction(wireTransaction, signersOrOptions);
     }
 
     if (signersOrOptions === undefined || !Array.isArray(signersOrOptions)) {
@@ -5985,7 +5988,7 @@ export class Connection {
     }
 
     const wireTransaction = await transaction.serialize();
-    return this.sendRawTransaction(wireTransaction, options);
+    return await this.sendRawTransaction(wireTransaction, options);
   }
 
   /**
@@ -6406,7 +6409,7 @@ export class Connection {
           // so no need to explicitly send an unsubscribe message.
           try {
             this.removeSignatureListener(clientSubscriptionId);
-          } catch (_err) {
+          } catch {
             // Already removed.
           }
         }
@@ -6459,7 +6462,7 @@ export class Connection {
             // so no need to explicitly send an unsubscribe message.
             try {
               this.removeSignatureListener(clientSubscriptionId);
-            } catch (_err) {
+            } catch {
               // Already removed.
             }
           }

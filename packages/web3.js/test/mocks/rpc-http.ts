@@ -178,7 +178,7 @@ export const mockRpcResponse = async ({
                 }),
               ),
         };
-      } catch (_e) {
+      } catch {
         return {statusCode: 500};
       }
     });
@@ -194,7 +194,7 @@ const latestBlockhash = async ({
   const blockhash = uniqueBlockhash();
   // The underlying Kit RPC client currently serializes explicit `finalized`
   // for `getLatestBlockhash` as the bare request with no params.
-  const params: Array<Object> =
+  const params: Array<object> =
     commitment === 'finalized' ? [] : [{commitment: commitment ?? 'confirmed'}];
 
   await mockRpcResponse({
@@ -219,7 +219,7 @@ const getFeeForMessage = async ({
   commitment?: Commitment;
   message: VersionedMessage;
 }) => {
-  const params: Array<Object> = [{commitment: commitment ?? 'confirmed'}];
+  const params: Array<object> = [{commitment: commitment ?? 'confirmed'}];
 
   await mockRpcResponse({
     method: 'getFeeForMessage',
@@ -273,7 +273,7 @@ const processTransaction = async ({
 
   await connection.sendEncodedTransaction(encoded, sendOptions);
 
-  await mockRpcMessage({
+  mockRpcMessage({
     method: 'signatureSubscribe',
     params: [signature, {commitment}],
     result: createSignatureStatusRpcResult(
@@ -305,7 +305,7 @@ const airdrop = async ({
 
   const signature = await connection.requestAirdrop(address, amountNumber);
 
-  await mockRpcMessage({
+  mockRpcMessage({
     method: 'signatureSubscribe',
     params: [signature, {commitment: 'confirmed'}],
     result: createSignatureStatusRpcResult(null),
